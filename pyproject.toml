@@ -10,6 +10,7 @@ dependencies = [
     "apache-airflow[celery,pandas,standard,uv]==3.1.5",
     "cloudpickle",
     "pandas",
+    "pyarrow>=22.0.0",
     "requests",
     "twelvedata",
 ]
