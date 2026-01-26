@@ -1,0 +1,4 @@
+CREATE TABLE IF NOT EXISTS exchange_rates(
+  symbol TEXT PRIMARY KEY,
+  rate DOUBLE PRECISION NOT NULL
+);

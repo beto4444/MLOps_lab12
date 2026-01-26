@@ -2,7 +2,7 @@ import pandas as pd
 import requests
 from airflow import DAG
 from airflow.providers.standard.operators.python import PythonOperator
-
+from airflow.providers.amazon.aws.hooks.s3 import S3Hook
 
 def get_data() -> dict:
     print("Fetching data from API")
@@ -27,12 +27,14 @@ def transform(data: dict) -> pd.DataFrame:
     return df
 
 
-def save_data(df: pd.DataFrame) -> None:
-    print("Saving the data")
-    df.to_csv("data.csv", index=False)
+def save_to_s3(df: pd.DataFrame, bucket: str, key: str) -> None:
+    s3 = S3Hook(aws_conn_id="aws_default")
+    csv_temp = df.to_csv(index=False)
+    s3.load_string(string_data=csv_temp, key=key, bucket_name=bucket, replace=True)
+    print(f"Data saved to s3://{bucket}/{key}")
 
 
-with DAG(dag_id="weather_data_classes_api"):
+with DAG(dag_id="weather_data_classes_api_s3"):
     get_data_op = PythonOperator(task_id="get_data", python_callable=get_data)
     transform_op = PythonOperator(
         task_id="transform",
@@ -40,7 +42,12 @@ with DAG(dag_id="weather_data_classes_api"):
         op_kwargs={"data": get_data_op.output},
     )
     load_op = PythonOperator(
-        task_id="load", python_callable=save_data, op_kwargs={"df": transform_op.output}
+        task_id="load",
+        python_callable=save_to_s3,
+        op_kwargs={
+            "df": transform_op.output,
+            "bucket": "weather-data",
+            "key": "weather_data_{{ data_interval_start | ds }}.csv",
+        },
     )
-
     get_data_op >> transform_op >> load_op

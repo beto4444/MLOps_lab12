@@ -7,5 +7,4 @@ COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
 WORKDIR /opt/airflow
 COPY pyproject.toml uv.lock ./
 RUN uv pip install --system pyproject.toml --group airflow_common
-
 USER airflow

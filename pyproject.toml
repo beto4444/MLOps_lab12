@@ -7,8 +7,10 @@ readme = "README.md"
 requires-python = "==3.11.*"
 
 dependencies = [
+    "apache-airflow-providers-amazon[s3fs]>=9.20.0",
     "apache-airflow[celery,postgres,standard,uv]==3.1.5",
     "pyarrow",
+    "s3fs>=2026.1.0",
 ]
 
 [dependency-groups]
@@ -19,5 +21,6 @@ dev = [
 airflow_common = [
     "apache-airflow[celery,postgres,standard,uv]==3.1.5",
     "requests",
-    "twelvedata"
+    "twelvedata",
+    "s3fs>=2026.1.0",
 ]

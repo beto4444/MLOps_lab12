@@ -209,3 +209,4 @@ __marimo__/
 airflow/airflow.db-shm
 airflow/airflow.db-wal
 airflow/simple_auth_manager_passwords.json
+.uv_cache
